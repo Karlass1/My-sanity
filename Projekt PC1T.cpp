@@ -1,6 +1,22 @@
 ﻿
 #include <string.h>
 #include <iostream>
+void resetSal()
+{
+	int r;
+	printf("Prejete si resetovat obsazeni?(1/0)\n");
+	scanf_s("%d", &r);
+	if(r == 1)
+	{
+
+		FILE* fl;
+		fopen_s(&fl, "sal.txt", "w");
+		for (int i = 0; i < 9 * 12; i++) {
+			fputc('0', fl);
+		}
+		fclose(fl);
+	}
+}
 int getPlace()
 {
 	printf("Vyberte radu\n");
@@ -125,19 +141,31 @@ void salprint()
 			
 		}
 	}
+	fclose(sal);
 }
 int main()
 {	
 	int r = 1;
-
 	while (r == 1)
-	{
+	{	
+		int random;
 		salprint();
-		book();
+		printf("Prejete si vybrat nahodne?(1/0)");
+		scanf_s("%d", &random);
+		if (random == 1)
+		{
 
-		printf("Prejete si dalsi listek?\n");
+		}
+		else
+		{
+			book();
+		}
+		printf("Prejete si dalsi listek? (1/0)\n");
 		scanf_s("%d", &r);
+		system("cls");
 
 	}
+	salprint();
+	resetSal();
 }
 
