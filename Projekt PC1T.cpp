@@ -1,6 +1,64 @@
 ﻿
 #include <string.h>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+void codeGen()
+{
+	srand(time(NULL));
+	int c = 0;
+	rand();
+	c = rand();
+	printf("Vas kod vstupenky je %05d\n", c);
+}
+void randomizer()
+{
+	for (size_t i = 0; i < 3; i++)
+	{
+		printf("|");
+		for (size_t j = 0; j < 3; j++)
+		{
+			printf("%d|", i*3 + j);
+		}
+		printf("\n");
+	}
+	printf("Zadejte sektor\n");
+	int sector = -1;
+	while(sector<0 || sector>8)
+	{
+		scanf_s("%d", &sector);
+		if (sector < 0 || sector>8)
+		{
+			printf("Neplatny vstup, opakujte akci\n");
+		}
+	}
+	FILE* sal;
+	fopen_s(&sal, "sal.txt", "r+");
+	int p = (sector % 3) * 4 + (sector - sector % 3) / 3 * 36;
+	fseek(sal, p, SEEK_SET);
+	int cyend = 0;
+	for (size_t i = 0; i < 3 && cyend ==0; i++)
+	{
+		for (size_t j = 0; j < 4; j++)
+		{
+			if (fgetc(sal) == '0')
+			{
+				fseek(sal, -1, SEEK_CUR);
+				fputc('1', sal); 
+				fclose(sal);
+				cyend = 1;
+				break;
+
+			}
+		}
+	}
+	if (cyend == 0)
+	{
+		printf("Sektor je plny\n");
+	}	
+	codeGen();
+}
 void resetSal()
 {
 	int r;
@@ -101,6 +159,7 @@ void book()
 			}
 		}
 	}
+	codeGen();
 }
 void salprint()
 {
@@ -144,17 +203,17 @@ void salprint()
 	fclose(sal);
 }
 int main()
-{	
+{
 	int r = 1;
 	while (r == 1)
 	{	
 		int random;
 		salprint();
-		printf("Prejete si vybrat nahodne?(1/0)");
+		printf("Prejete si vybrat nahodne?(1/0)\n");
 		scanf_s("%d", &random);
 		if (random == 1)
 		{
-
+			randomizer();
 		}
 		else
 		{
