@@ -4,6 +4,65 @@
 #include <stdlib.h>
 #include <time.h>
 
+void printTitle() {
+	char welcome[] = "Welcome to Kozmostar!";
+	int width = 42;
+	int offset = width / 2 - strlen(welcome) / 2;
+
+	for (int i = 0; i < width; i++) {
+		printf("=");
+	}
+	printf("\n");
+	for (int i = 0; i < offset; i++) printf(" ");
+
+	for (int i = 0; i < strlen(welcome); i++) {
+		printf("%c", welcome[i]);
+	}
+	printf("\n");
+	for (int i = 0; i < width; i++) {
+
+		printf("=");
+	}
+	printf("\n");
+	printf("\n");
+}
+int films()
+{
+	printf("1 - Tohle je Sparta\n");
+	printf("2 - Johhny English\n");
+	printf("3 - Blazniva strela\n");
+	printf("4 - Team America\n");
+	printf("5 - Spaceballs\n");
+	printf("6 - Disaster movie\n");
+	printf("\nZadejte cislo filmu\n");
+	int f = 0;
+	while (f < 1 || f>6)
+	{
+		scanf_s("%d", &f);
+		if (f < 1 || f>6)
+		{
+			printf("Neplatny vstup, opakujte akci\n");
+		}
+	}
+	printf("1 - 15:00-16:40\n");
+	printf("2 - 16:50-18:30\n");
+	printf("3 - 18:40-20:20\n");
+	int c = 0;
+	printf("\nZadejte cas\n");
+	while (c < 1 || c>3)
+	{
+		scanf_s("%d", &c);
+		if (c < 1 || c>3)
+		{
+			printf("Neplatny vstup, opakujte akci\n");
+		}
+	}
+	f--;
+	c--;
+	int skip;
+	skip = f * 3 * 108 + c * 108;
+	return skip;
+}
 void codeGen()
 {
 	srand(time(NULL));
@@ -12,7 +71,7 @@ void codeGen()
 	c = rand();
 	printf("Vas kod vstupenky je %05d\n", c);
 }
-void randomizer()
+void randomizer(int film)
 {
 	for (size_t i = 0; i < 3; i++)
 	{
@@ -36,7 +95,7 @@ void randomizer()
 	FILE* sal;
 	fopen_s(&sal, "sal.txt", "r+");
 	int p = (sector % 3) * 4 + (sector - sector % 3) / 3 * 36;
-	fseek(sal, p, SEEK_SET);
+	fseek(sal, p+film, SEEK_SET);
 	int cyend = 0;
 	for (size_t i = 0; i < 3 && cyend ==0; i++)
 	{
@@ -59,7 +118,7 @@ void randomizer()
 	}	
 	codeGen();
 }
-void resetSal()
+void resetSal(int film)
 {
 	int r;
 	printf("Prejete si resetovat obsazeni?(1/0)\n");
@@ -68,7 +127,8 @@ void resetSal()
 	{
 
 		FILE* fl;
-		fopen_s(&fl, "sal.txt", "w");
+		fopen_s(&fl, "sal.txt", "r+");
+		fseek(fl, film, SEEK_SET);
 		for (int i = 0; i < 9 * 12; i++) {
 			fputc('0', fl);
 		}
@@ -133,7 +193,7 @@ int getPlace()
 	int total = rada * 12 + (ret-1);
 	return total;
 }
-void book()
+void book(int film)
 {
 	FILE* sal;
 	fopen_s(&sal, "sal.txt", "r+");
@@ -145,7 +205,7 @@ void book()
 	{
 		while (true)
 		{
-			fseek(sal, getPlace(), SEEK_SET);
+			fseek(sal, getPlace()+film, SEEK_SET);
 			if (fgetc(sal) == '1')
 			{
 				printf("Misto je obsazeno");
@@ -161,12 +221,13 @@ void book()
 	}
 	codeGen();
 }
-void salprint()
+void salprint(int film)
 {
 
 	printf("==================PLATNO==================\n\n");
 	FILE* sal;
 	fopen_s(&sal, "sal.txt", "r+");
+	fseek(sal, film, SEEK_SET);
 	for (size_t i = 0; i < 9; i++)
 	{	
 		printf("%c ", 'A' + i);
@@ -203,28 +264,32 @@ void salprint()
 	fclose(sal);
 }
 int main()
-{
+{	
+
+	printTitle();
+	int film;
+	film = films();
 	int r = 1;
 	while (r == 1)
 	{	
 		int random;
-		salprint();
+		salprint(film);
 		printf("Prejete si vybrat nahodne?(1/0)\n");
 		scanf_s("%d", &random);
 		if (random == 1)
 		{
-			randomizer();
+			randomizer(film);
 		}
 		else
 		{
-			book();
+			book(film);
 		}
 		printf("Prejete si dalsi listek? (1/0)\n");
 		scanf_s("%d", &r);
 		system("cls");
 
 	}
-	salprint();
-	resetSal();
+	salprint(film);
+	resetSal(film);
 }
 
