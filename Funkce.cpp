@@ -294,9 +294,11 @@ int remove(int film)
 	}
 	else
 	{
+		fclose(sal);
 		salprint(film);
 		while (true)
 		{
+			fopen_s(&sal, "sal.txt", "r+");
 			fseek(sal, getPlace() + film, SEEK_SET);
 			if (fgetc(sal) == '0')
 			{
