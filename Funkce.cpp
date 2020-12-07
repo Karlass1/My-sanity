@@ -113,6 +113,7 @@ void randomizer(int film)
 
 			}
 		}
+		fseek(sal, 8, SEEK_CUR);
 	}
 	if (cyend == 0)
 	{
